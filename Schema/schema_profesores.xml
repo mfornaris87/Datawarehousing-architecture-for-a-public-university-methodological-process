@@ -1,0 +1,122 @@
+<Schema name="dm_profesores">
+  <Dimension type="StandardDimension" visible="true" highCardinality="false" name="Colectivo de anno" caption="Colectivo de a&#241;o">
+    <Hierarchy name="colectivo_anno" visible="true" hasAll="true" primaryKey="id_colectivo_anno">
+      <Table name="dim_colectivo_anno" schema="public">
+      </Table>
+      <Level name="carrera" visible="true" table="dim_colectivo_anno" column="carrera" nameColumn="carrera" ordinalColumn="carrera" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never" caption="Carrera">
+      </Level>
+      <Level name="modalidad" visible="true" table="dim_colectivo_anno" column="modalidad" nameColumn="modalidad" ordinalColumn="modalidad" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never" caption="Modalidad">
+      </Level>
+      <Level name="anno_academico" visible="true" table="dim_colectivo_anno" column="anno_academico" nameColumn="anno_academico" ordinalColumn="anno_academico" type="Integer" uniqueMembers="false" levelType="Regular" hideMemberIf="Never" caption="A&#241;o acad&#233;mico">
+      </Level>
+    </Hierarchy>
+  </Dimension>
+  <Dimension type="StandardDimension" visible="true" highCardinality="false" name="Grupo de investigacion" caption="Grupo de investigaci&#243;n">
+    <Hierarchy name="grupo_investigacion" visible="true" hasAll="true" primaryKey="id_grupo_investigacion">
+      <Table name="dim_grupo_investigacion" schema="public">
+      </Table>
+      <Level name="nombre_grupo" visible="true" table="dim_grupo_investigacion" column="nombre_grupo" nameColumn="nombre_grupo" ordinalColumn="nombre_grupo" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never" caption="Grupo de investigaci&#243;n">
+      </Level>
+    </Hierarchy>
+  </Dimension>
+  <Dimension type="StandardDimension" visible="true" highCardinality="false" name="Profesor">
+    <Hierarchy name="profesor" visible="true" hasAll="true" primaryKey="id_profesor">
+      <Table name="dim_profesor" schema="public">
+      </Table>
+      <Level name="nombres" visible="true" table="dim_profesor" column="nombres" nameColumn="nombres" ordinalColumn="nombres" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never" caption="Nombres">
+      </Level>
+      <Level name="apellidos" visible="true" table="dim_profesor" column="apellidos" nameColumn="apellidos" ordinalColumn="apellidos" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never" caption="Apellidos">
+      </Level>
+      <Level name="categoria_docente" visible="true" table="dim_profesor" column="categoria_docente" nameColumn="categoria_docente" ordinalColumn="categoria_docente" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never" caption="Categor&#237;a docente">
+      </Level>
+      <Level name="categoria_cientifica" visible="true" table="dim_profesor" column="categoria_cientifica" nameColumn="categoria_cientifica" ordinalColumn="categoria_cientifica" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never" caption="Categor&#237;a cient&#237;fica">
+      </Level>
+    </Hierarchy>
+  </Dimension>
+  <Dimension type="StandardDimension" visible="true" highCardinality="false" name="Revistas indexadas" caption="Revistas indexadas">
+    <Hierarchy name="revistas_indexadas" visible="true" hasAll="true" primaryKey="id_revistas_indexadas">
+      <Table name="dim_revistas_indexadas" schema="public">
+      </Table>
+      <Level name="nombre_revista" visible="true" table="dim_revistas_indexadas" column="nombre_revista" nameColumn="nombre_revista" ordinalColumn="nombre_revista" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never" caption="Nombre de la revista">
+      </Level>
+      <Level name="base_datos" visible="true" table="dim_revistas_indexadas" column="base_datos" nameColumn="base_datos" ordinalColumn="base_datos" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never" caption="Base de datos">
+      </Level>
+    </Hierarchy>
+  </Dimension>
+  <Dimension type="TimeDimension" visible="true" highCardinality="false" name="Tiempo" caption="Tiempo">
+    <Hierarchy name="tiempo" visible="true" hasAll="true" primaryKey="id_tiempo" caption="Tiempo">
+      <Table name="dim_tiempo" schema="public">
+      </Table>
+      <Level name="curso" visible="true" table="dim_tiempo" column="curso" nameColumn="curso" ordinalColumn="curso" type="String" uniqueMembers="true" levelType="TimeYears" hideMemberIf="Never" caption="Curso escolar">
+      </Level>
+      <Level name="semestre" visible="true" table="dim_tiempo" column="semestre" nameColumn="semestre" ordinalColumn="semestre" type="Integer" uniqueMembers="false" levelType="TimeHalfYear" hideMemberIf="Never" caption="Semestre">
+      </Level>
+    </Hierarchy>
+  </Dimension>
+  <Cube name="Datos profesores" visible="true" cache="true" enabled="true">
+    <Table name="h_datos_profesores" schema="public">
+    </Table>
+    <DimensionUsage source="Colectivo de anno" name="Colectivo de anno" caption="Colectivo de a&#241;o" visible="true" foreignKey="id_colectivo_anno" highCardinality="false">
+    </DimensionUsage>
+    <DimensionUsage source="Tiempo" name="Tiempo" caption="Tiempo" visible="true" foreignKey="id_tiempo" highCardinality="false">
+    </DimensionUsage>
+    <Measure name="cantidad_profesores" column="cant_prof" datatype="Numeric" aggregator="sum" caption="Cantidad de profesores" visible="true">
+    </Measure>
+    <Measure name="cantidad_doctores" column="cant_doctores" datatype="Numeric" aggregator="sum" caption="Cantidad de doctores" visible="true">
+    </Measure>
+    <Measure name="cantidad_profesores_auxiliares" column="cant_prof_auxiliares" datatype="Numeric" aggregator="sum" caption="Cantidad de profesores auxiliares" visible="true">
+    </Measure>
+    <Measure name="cantidad_prof_evaluados_mal" column="cant_prof_evaluados_mal" datatype="Numeric" aggregator="sum" caption="Cantidad de profesores evaluados de mal" visible="true">
+    </Measure>
+    <Measure name="participacion_eventos_profesor" column="participacion_eventos_prof" datatype="Numeric" aggregator="sum" caption="Participaci&#243;n del profesor en eventos del colectivo de a&#241;o" visible="true">
+    </Measure>
+    <CalculatedMember name="porciento_doctores" caption="Porcentaje de doctores" formula="IIF([Measures].[cantidad_profesores]=0,0,[Measures].[cantidad_doctores]*100/[Measures].[cantidad_profesores])" dimension="Measures" visible="true">
+    </CalculatedMember>
+    <CalculatedMember name="porciento_prof_auxiliares" caption="Porcentaje de profesores auxiliares" formula="IIF([Measures].[cantidad_profesores]=0,0,[Measures].[cantidad_profesores_auxiliares]*100/[Measures].[cantidad_profesores])" dimension="Measures" visible="true">
+    </CalculatedMember>
+    <CalculatedMember name="porciento_prof_evaluados_mal" caption="Porcentaje de profesores evaluados de mal" formula="IIF([Measures].[cantidad_profesores]=0,0,[Measures].[cantidad_prof_evaluados_mal]*100/[Measures].[cantidad_profesores])" dimension="Measures" visible="true">
+    </CalculatedMember>
+    <CalculatedMember name="porciento_part_eventos_prof" caption="Porcentaje de participaci&#243;n en eventos de los profesores" formula="IIF([Measures].[cantidad_profesores]=0,0,[Measures].[participacion_eventos_profesor]*100/[Measures].[cantidad_profesores])" dimension="Measures" visible="true">
+    </CalculatedMember>
+    <CalculatedMember name="indice_integracion_profesor" caption="&#205;ndice de integraci&#243;n del profesor al colectivo de a&#241;o" formula="IIF([Measures].[porciento_part_eventos_prof]&#62;80,&#39;Alto&#39;,IIF([Measures].[porciento_part_eventos_prof]&#60;80 AND [Measures].[porciento_part_eventos_prof]&#62;60,&#39;Medio&#39;,&#39;Bajo&#39;))" dimension="Measures" visible="true">
+    </CalculatedMember>
+  </Cube>
+  <Cube name="Cantidad de publicaciones indexadas" visible="true" cache="true" enabled="true">
+    <Table name="h_cant_pub_indexadas" schema="public">
+    </Table>
+    <DimensionUsage source="Colectivo de anno" name="Colectivo de anno" caption="Colectivo de a&#241;o" visible="true" foreignKey="id_colectivo_anno" highCardinality="false">
+    </DimensionUsage>
+    <DimensionUsage source="Profesor" name="Profesor" caption="Profesor" visible="true" foreignKey="id_profesor" highCardinality="false">
+    </DimensionUsage>
+    <DimensionUsage source="Revistas indexadas" name="Revistas indexadas" caption="Revistas indexadas" visible="true" foreignKey="id_revistas_indexadas" highCardinality="false">
+    </DimensionUsage>
+    <Measure name="cant_publicaciones_indexadas" column="cant_publicaciones" datatype="Numeric" aggregator="sum" caption="Cantidad de publicaciones indexadas por profesor" visible="true">
+    </Measure>
+    <CalculatedMember name="indice_publicaciones_indexadas" caption="&#205;ndice de publicaciones indexadas" formula="IIF([Measures].[cant_publicaciones_indexadas]&#62;3,&#39;Alto&#39;,IIF([Measures].[cant_publicaciones_indexadas]&#60;3 AND [Measures].[cant_publicaciones_indexadas]&#62;1,&#39;Medio&#39;,&#39;Bajo&#39;))" dimension="Measures" visible="true">
+    </CalculatedMember>
+  </Cube>
+  <Cube name="Preparacion del profesor" caption="Preparaci&#243;n del profesor" visible="true" cache="true" enabled="true">
+    <Table name="h_preparacion_profesor" schema="public">
+    </Table>
+    <DimensionUsage source="Colectivo de anno" name="Colectivo de anno" caption="Colectivo de a&#241;o" visible="true" foreignKey="id_colectivo_anno" highCardinality="false">
+    </DimensionUsage>
+    <DimensionUsage source="Profesor" name="Profesor" caption="Profesor" visible="true" foreignKey="id_profesor" highCardinality="false">
+    </DimensionUsage>
+    <Measure name="annos_experiencia_ppaa" column="annos_experiencia_ppaa" datatype="Numeric" aggregator="count" caption="A&#241;os de experiencia del profesor principal de a&#241;o" visible="true">
+    </Measure>
+    <Measure name="cant_posgrados" column="cant_posgrados" datatype="Numeric" aggregator="sum" caption="Cantidad de posgrados recibidos por cada profesor" visible="true">
+    </Measure>
+  </Cube>
+  <Cube name="Cantidad de profesores por grupo de investigacion" caption="Cantidad de profesores por grupo de investigaci&#243;n" visible="true" cache="true" enabled="true">
+    <Table name="h_profesores_grupo_inv" schema="public">
+    </Table>
+    <DimensionUsage source="Colectivo de anno" name="Colectivo de anno" caption="Colectivo de a&#241;o" visible="true" foreignKey="id_colectivo_anno" highCardinality="false">
+    </DimensionUsage>
+    <DimensionUsage source="Tiempo" name="Tiempo" caption="Tiempo" visible="true" foreignKey="id_tiempo" highCardinality="false">
+    </DimensionUsage>
+    <DimensionUsage source="Grupo de investigacion" name="Grupo de investigacion" caption="Grupo de investigaci&#243;n" visible="true" foreignKey="id_grupo_investigacion" highCardinality="false">
+    </DimensionUsage>
+    <Measure name="cantidad_profesores_grupo" column="cant_prof_grupo" datatype="Numeric" aggregator="sum" caption="Cantidad de profesores por grupo de investigaci&#243;n" visible="true">
+    </Measure>
+  </Cube>
+</Schema>
